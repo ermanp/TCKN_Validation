@@ -1,0 +1,44 @@
+/**
+  *
+  Check is given tckn is valid or not. If valid, return 1 else return 0
+  *
+  */
+  function is_valid_tckn(p_tckn varchar) return number as
+    v_result   number := 0;
+    v_tmp_tckn varchar2(11);
+    type char_arr is table of char(1) index by pls_integer;
+    l_arr char_arr;
+  begin
+    if (p_tckn is not null) then
+      v_tmp_tckn := trim(p_tckn);
+      --is length valid     
+      if (length(v_tmp_tckn) = 11) then
+       
+        --add to array     
+        for i in 1 .. length(v_tmp_tckn) loop
+          l_arr(i) := substr(v_tmp_tckn, i, 1);
+        end loop;
+        --Check first char
+        if (l_arr(1) != '0') then
+          --Check last char
+          if (mod(l_arr(11), 2) != 1) then
+            if (mod((l_arr(1) + l_arr(3) + l_arr(5) + l_arr(7) + l_arr(9)) * 7 -
+                    (l_arr(2) + l_arr(4) + l_arr(6) + l_arr(8)),
+                    10) = l_arr(10)) then                   
+              if (mod(l_arr(1) + l_arr(2) + l_arr(3) + l_arr(4) + l_arr(5) +
+                      l_arr(6) + l_arr(7) + l_arr(8) + l_arr(9) + l_arr(10),
+                      10) = l_arr(11)) then
+                v_result := 1;
+              end if;
+            end if;
+          end if;
+        end if;
+         
+      end if;
+    end if;
+   
+    return v_result;
+  exception
+    when others then
+      return v_result;
+  end;
